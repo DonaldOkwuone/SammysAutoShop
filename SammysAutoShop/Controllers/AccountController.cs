@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SammysAutoShop.Data;
 using SammysAutoShop.Models;
 using SammysAutoShop.Models.AccountViewModels;
 using SammysAutoShop.Services;
@@ -22,12 +23,16 @@ namespace SammysAutoShop.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private ApplicationDbContext _db;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext db,
+            RoleManager<IdentityRole> roleManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
@@ -35,6 +40,8 @@ namespace SammysAutoShop.Controllers
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _db = db;
+            _roleManager = roleManager;
         }
 
         [TempData]
@@ -220,7 +227,16 @@ namespace SammysAutoShop.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { 
+                    UserName = model.Email,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    PostalCode = model.PostalCode,
+                    City = model.City,
+                    Address = model.Address,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
