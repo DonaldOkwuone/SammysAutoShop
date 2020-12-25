@@ -16,16 +16,17 @@ namespace SammysAutoShop.Models
 
         public int? ServiceId { get; set; }
 
-        public string ActionParameters {
+        public string ActionParameters
+        {
             get
             {
                 var param = new StringBuilder(@"/");
-                if(ServiceId != 0  && ServiceId != null)
+                if (ServiceId != 0 && ServiceId != null)
                 {
                     param.Append(String.Format("{0}", ServiceId));
                 }
                 return param.ToString().Substring(0, param.Length);
             }
-             }
+        }
     }
 }
